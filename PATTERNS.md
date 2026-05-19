@@ -92,3 +92,15 @@ classDiagram
     ConverterDecorator o-- FileConverter : wraps
     ConverterDecorator <|-- WatermarkDecorator
     ConverterDecorator <|-- EncryptionDecorator
+
+    ## 4. Observer (Gözlemci) - Behavioral
+**Uygulandığı Faz:** Faz 3
+**Uygulandığı Yer:** `EventManager`, `ConsoleLogger`, `EmailNotifier` sınıfları.
+**Neden Kullanıldı?** Dönüştürme işlemi bittiğinde loglama veya e-posta atma gibi işlemleri ana koda (`ConverterApplication`) gömmek istemedik.
+**Ne Kazandırdı?** Sisteme yeni bir dinleyici (Örn: SMSNotifier) eklemek istediğimizde mevcut hiçbir koda dokunmadan sadece yeni bir sınıf oluşturmamız yeterli oldu (Açık/Kapalı Prensibi - OCP).
+
+## 5. Strategy (Strateji) - Behavioral
+**Uygulandığı Faz:** Faz 3
+**Uygulandığı Yer:** `CompressionStrategy`, `ZipCompression`, `RarCompression` sınıfları.
+**Neden Kullanıldı?** Farklı sıkıştırma algoritmalarını uzun `if-else` bloklarıyla yönetmek yerine çalışma zamanında (runtime) dinamik olarak değiştirebilmek istedik.
+**Ne Kazandırdı?** Ana uygulama algoritma detaylarından bağımsız hale geldi. Sıkıştırma mantığı kolayca tak-çıkar yapılabilir bir modül oldu (OCP).
