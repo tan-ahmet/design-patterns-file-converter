@@ -36,3 +36,59 @@ classDiagram
     FileConverter <|-- PDFConverter
     FileConverter <|-- WordConverter
     ConverterFactory ..> FileConverter : Üretir
+
+    ## 2. Adapter (Uyumlandırıcı) - Structural
+**Uygulandığı Faz:** Faz 2
+**Uygulandığı Yer:** `LegacyCSVConverter` ve `CSVConverterAdapter` sınıfları.
+
+**Neden Kullanıldı?**
+Sistemimize dışarıdan hazır bir CSV kütüphanesi (`LegacyCSVConverter`) dahil etmek istedik, ancak bu sınıfın metot yapısı bizim `FileConverter` arayüzümüze uymuyordu.
+
+**Ne Kazandırdı?**
+Eski/dış kütüphanenin kaynak koduna hiç dokunmadan, onu bir "Adaptör" sınıfı ile sarmalayarak kendi sistemimizle uyumlu çalışabilir hale getirdik.
+
+## 3. Decorator (Dekoratör) - Structural
+**Uygulandığı Faz:** Faz 2
+**Uygulandığı Yer:** `ConverterDecorator`, `WatermarkDecorator` ve `EncryptionDecorator` sınıfları.
+
+**Neden Kullanıldı?**
+Dönüştürülen dosyalara "Filigran (Watermark) Ekleme" ve "Şifreleme" gibi yeni özellikler kazandırmak istedik. Bunu kalıtım (inheritance) ile yapsaydık (örn: `WatermarkedEncryptedPDFConverter` gibi) sınıf patlaması yaşayacaktık.
+
+**Ne Kazandırdı?**
+Orijinal `PDFConverter` sınıfını değiştirmeden, çalışma zamanında (runtime) dinamik olarak nesnelere yeni sorumluluklar ekleyebildik.
+
+### Faz 2 Sonrası Güncel Mimari (UML)
+```mermaid
+classDiagram
+    class FileConverter {
+        <<interface>>
+        +convert(file_name, to_format)
+    }
+    
+    class PDFConverter { +convert() }
+    class WordConverter { +convert() }
+    
+    class LegacyCSVConverter {
+        +specific_csv_conversion()
+    }
+    class CSVConverterAdapter {
+        -legacy_converter
+        +convert()
+    }
+    
+    class ConverterDecorator {
+        -wrapped_converter
+        +convert()
+    }
+    class WatermarkDecorator { +convert() }
+    class EncryptionDecorator { +convert() }
+    
+    FileConverter <|-- PDFConverter
+    FileConverter <|-- WordConverter
+    FileConverter <|-- CSVConverterAdapter
+    FileConverter <|-- ConverterDecorator
+    
+    CSVConverterAdapter --> LegacyCSVConverter : uses
+    ConverterDecorator o-- FileConverter : wraps
+    ConverterDecorator <|-- WatermarkDecorator
+    ConverterDecorator <|-- EncryptionDecorator
