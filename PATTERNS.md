@@ -11,7 +11,6 @@ Başlangıç kodunda `FileConverter` sınıfı hem hangi nesnenin yaratılacağ�
 Açık/Kapalı Prensibi (OCP) sağlandı. Artık yeni bir format (örneğin JPEG) eklendiğinde, sadece yeni bir `JPEGConverter` sınıfı yazıp `ConverterFactory` içine tek bir satır eklememiz yeterli olacak. Sistemin geri kalan kodu (iş mantığı) bu değişiklikten hiç etkilenmeyecek.
 
 ### Önceki ve Sonraki Mimari (UML)
-
 ```mermaid
 classDiagram
     direction LR
@@ -36,8 +35,9 @@ classDiagram
     FileConverter <|-- PDFConverter
     FileConverter <|-- WordConverter
     ConverterFactory ..> FileConverter : Üretir
+```
 
-    ## 2. Adapter (Uyumlandırıcı) - Structural
+## 2. Adapter (Uyumlandırıcı) - Structural
 **Uygulandığı Faz:** Faz 2
 **Uygulandığı Yer:** `LegacyCSVConverter` ve `CSVConverterAdapter` sınıfları.
 
@@ -92,15 +92,20 @@ classDiagram
     ConverterDecorator o-- FileConverter : wraps
     ConverterDecorator <|-- WatermarkDecorator
     ConverterDecorator <|-- EncryptionDecorator
+```
 
-    ## 4. Observer (Gözlemci) - Behavioral
+## 4. Observer (Gözlemci) - Behavioral
 **Uygulandığı Faz:** Faz 3
 **Uygulandığı Yer:** `EventManager`, `ConsoleLogger`, `EmailNotifier` sınıfları.
+
 **Neden Kullanıldı?** Dönüştürme işlemi bittiğinde loglama veya e-posta atma gibi işlemleri ana koda (`ConverterApplication`) gömmek istemedik.
+
 **Ne Kazandırdı?** Sisteme yeni bir dinleyici (Örn: SMSNotifier) eklemek istediğimizde mevcut hiçbir koda dokunmadan sadece yeni bir sınıf oluşturmamız yeterli oldu (Açık/Kapalı Prensibi - OCP).
 
 ## 5. Strategy (Strateji) - Behavioral
 **Uygulandığı Faz:** Faz 3
 **Uygulandığı Yer:** `CompressionStrategy`, `ZipCompression`, `RarCompression` sınıfları.
+
 **Neden Kullanıldı?** Farklı sıkıştırma algoritmalarını uzun `if-else` bloklarıyla yönetmek yerine çalışma zamanında (runtime) dinamik olarak değiştirebilmek istedik.
+
 **Ne Kazandırdı?** Ana uygulama algoritma detaylarından bağımsız hale geldi. Sıkıştırma mantığı kolayca tak-çıkar yapılabilir bir modül oldu (OCP).
